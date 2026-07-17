@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find My MOE ID</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-blue-900 via-indigo-950 to-slate-900 min-h-screen flex items-center justify-center p-4">
+
+  <!-- Card Utama -->
+  <div class="glass-effect w-full max-w-md rounded-2xl shadow-2xl border border-white/20 p-8 transition-all duration-300">
+    <!-- Header Web -->
+    <div class="text-center mb-8">
+      <div class="inline-flex p-3 bg-blue-600/10 rounded-full text-blue-400 mb-3 text-3xl">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Semak ID DELIMa</h1>
+      <p class="text-slate-500 text-sm mt-1">Masukkan butiran di bawah untuk carian pantas</p>
+    </div>
+
+    <!-- Form Carian -->
+    <form id="searchForm" class="space-y-5">
+      <!-- Input Category (Kelas) -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Kelas / Kategori</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+            <i class="fa-solid fa-school"></i>
+          </span>
+          <select id="category" required class="w-full pl-10 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-800 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition appearance-none">
+            <option value="" disabled selected>Memuatkan senarai kelas...</option>
+          </select>
+          <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+            <i class="fa-solid fa-chevron-down text-xs"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Input 6 Digit No IC -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">6 Digit Terakhir No. IC</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+            <i class="fa-solid fa-key"></i>
+          </span>
+          <input type="text" id="lastsixdigit" pattern="[0-9]{6}" maxlength="6" inputmode="numeric" placeholder="Contoh: 123456" required 
+            class="w-full pl-10 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-800 font-medium placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+        </div>
+      </div>
+
+      <!-- Butang Hantar -->
+      <button type="submit" id="btnSubmit" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition transform duration-150">
+        <span id="btnText"><i class="fa-solid fa-magnifying-glass mr-2"></i> Cari Maklumat</span>
+        <span id="btnLoading" class="hidden"><i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Mencari...</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Modal Keputusan -->
+  <div id="resultModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 border border-slate-100 transform transition-all scale-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b pb-4 mb-5">
+        <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-circle-check text-green-500 mr-2"></i>Maklumat Dijumpai!</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+
+      <!-- Detail Pelajar -->
+      <div class="space-y-4">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Nama Penuh</span>
+          <p id="resName" class="text-base font-bold text-slate-800">-</p>
+        </div>
+
+        <!-- Box ID MOE -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">ID MOE (Google)</span>
+          <div class="flex justify-between items-center">
+            <span id="resEmail" class="font-mono text-slate-700 font-bold select-all break-all">-</span>
+            <button onclick="copyText('resEmail', 'copyBtnEmail')" id="copyBtnEmail" class="ml-2 text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition" title="Salin ID">
+              <i class="fa-regular fa-copy text-lg"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Box Kata Laluan -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Kata Laluan</span>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+              <span id="resPassword" class="font-mono text-slate-700 font-bold tracking-widest">-</span>
+            </div>
+            <div class="flex items-center space-x-1">
+              <button onclick="togglePasswordVisibility()" class="text-slate-500 hover:text-slate-700 p-2" title="Tunjuk/Sembunyi">
+                <i id="eyeIcon" class="fa-regular fa-eye"></i>
+              </button>
+              <button onclick="copyText('resPassword', 'copyBtnPass')" id="copyBtnPass" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition" title="Salin Kata Laluan">
+                <i class="fa-regular fa-copy text-lg"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taktik Aliran Kerja Dua Langkah -->
+      <div class="mt-6 border-t pt-4 space-y-3">
+        <div class="text-xs text-slate-500 bg-amber-50 border border-amber-100 p-3 rounded-lg flex items-start">
+          <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 mr-2"></i>
+          <span>Sila <strong>Salin ID MOE</strong> dahulu sebelum klik butang log masuk di bawah.</span>
+        </div>
+        <a href="https://delima.moe-dl.edu.my" target="_blank" class="w-full block text-center py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition transform duration-150">
+          Log Masuk DELIMa <i class="fa-solid fa-arrow-right-to-bracket ml-1.5"></i>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KOD JAVASCRIPT BERMULA DI SINI -->
+  <script>
+    // PENTING: Gantikan URL di bawah dengan URL Google Apps Script anda yang sebenar
+    const API_URL = "https://script.google.com/macros/s/AKfycbzdiPn1qO_R2Iii7ga_O8S6-7vMj_ttFeqNbocYi97xCXY1S0syM-nzh0MPPUcC_9Oy/exec";
+
+    let rawPassword = ""; 
+    let isPasswordVisible = false;
+
+    // Tarik senarai kelas automatik sebaik sahaja web dibuka
+    window.addEventListener('DOMContentLoaded', async () => {
+      const categorySelect = document.getElementById('category');
+      try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+        
+        if (result.success && result.classes.length > 0) {
+          categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kelas Anda</option>';
+          result.classes.forEach(className => {
+            const option = document.createElement('option');
+            option.value = className;
+            option.innerText = className;
+            categorySelect.appendChild(option);
+          });
+        } else {
+          categorySelect.innerHTML = '<option value="" disabled>Gagal memuatkan kelas</option>';
+        }
+      } catch (error) {
+        console.error("Gagal menarik kelas:", error);
+        categorySelect.innerHTML = '<option value="" disabled>Ralat sambungan database</option>';
+      }
+    });
+
+    // Proses hantar carian
+    document.getElementById('searchForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const category = document.getElementById('category').value;
+      const lastsixdigit = document.getElementById('lastsixdigit').value;
+      
+      setLoadingState(true);
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ category, lastsixdigit })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          document.getElementById('resName').innerText = result.data.fullname;
+          document.getElementById('resEmail').innerText = result.data.moeid;
+          
+          rawPassword = result.data.password;
+          maskPassword();
+          openModal();
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error("Ralat:", error);
+        alert("Maaf, ralat sistem berlaku. Cuba sebentar lagi.");
+      } finally {
+        setLoadingState(false);
+      }
+    });
+
+    function setLoadingState(isLoading) {
+      const btnSubmit = document.getElementById('btnSubmit');
+      const btnText = document.getElementById('btnText');
+      const btnLoading = document.getElementById('btnLoading');
+      
+      if (isLoading) {
+        btnSubmit.disabled = true;
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+      } else {
+        btnSubmit.disabled = false;
+        btnText.classList.remove('hidden');
+        btnLoading.classList.add('hidden');
+      }
+    }
+
+    function openModal() {
+      const modal = document.getElementById('resultModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('resultModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      isPasswordVisible = false;
+    }
+
+    function maskPassword() {
+      const passSpan = document.getElementById('resPassword');
+      const eyeIcon = document.getElementById('eyeIcon');
+      passSpan.innerText = "••••••••";
+      eyeIcon.className = "fa-regular fa-eye";
+    }
+
+    function togglePasswordVisibility() {
+      const passSpan = document.getElementById('resPassword');
+      const eyeIcon = document.getElementById('eyeIcon');
+      
+      if (isPasswordVisible) {
+        maskPassword();
+        isPasswordVisible = false;
+      } else {
+        passSpan.innerText = rawPassword;
+        eyeIcon.className = "fa-regular fa-eye-slash";
+        isPasswordVisible = true;
+      }
+    }
+
+    async function copyText(elementId, buttonId) {
+      let textToCopy = (elementId === 'resPassword') ? rawPassword : document.getElementById(elementId).innerText;
+      
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        const button = document.getElementById(buttonId);
+        const originalIcon = button.innerHTML;
+        
+        button.innerHTML = `<i class="fa-solid fa-check text-green-500 text-lg"></i>`;
+        button.classList.add('bg-green-50');
+        
+        setTimeout(() => {
+          button.innerHTML = originalIcon;
+          button.classList.remove('bg-green-50');
+        }, 2000);
+      } catch (err) {
+        console.error("Gagal menyalin teks: ", err);
+      }
+    }
+  </script>
+</body>
+</html>
