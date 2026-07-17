@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Find My MOE ID</title>
+  <title>Semakan ID DELIMa Murid & Guru</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -16,14 +16,17 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-tr from-blue-900 via-indigo-950 to-slate-900 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-tr from-blue-900 via-indigo-950 to-slate-900 min-h-screen flex flex-col items-center justify-between p-4">
+
+  <!-- Spacer atas untuk menyeimbangkan layout flex -->
+  <div class="hidden md:block"></div>
 
   <!-- Card Utama -->
-  <div class="glass-effect w-full max-w-md rounded-2xl shadow-2xl border border-white/20 p-8 transition-all duration-300">
-    <!-- Header Web -->
-    <div class="text-center mb-8">
-      <div class="inline-flex p-3 bg-blue-600/10 rounded-full text-blue-400 mb-3 text-3xl">
-        <i class="fa-solid fa-graduation-cap"></i>
+  <div class="glass-effect w-full max-w-md rounded-2xl shadow-2xl border border-white/20 p-8 my-auto transition-all duration-300">
+    <!-- Header Web dengan Logo Sekolah -->
+    <div class="text-center mb-6">
+      <div class="inline-flex mb-3">
+        <img src="https://imagetourl.cloud/evwag9fq.png" alt="Logo SK Methodist PJ" class="h-24 w-auto object-contain drop-shadow-md">
       </div>
       <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Semak ID DELIMa</h1>
       <p class="text-slate-500 text-sm mt-1">Masukkan butiran di bawah untuk carian pantas</p>
@@ -67,70 +70,88 @@
     </form>
   </div>
 
+  <!-- Footer Landing Page -->
+  <footer class="w-full text-center py-4 text-xs font-medium text-slate-400/80 tracking-wide">
+    Digital Hub SK Methodist PJ. FMMI Version 2.0 (2026)
+  </footer>
+
   <!-- Modal Keputusan -->
   <div id="resultModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 border border-slate-100 transform transition-all scale-95 duration-200">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 border border-slate-100 transform transition-all scale-95 duration-200 flex flex-col justify-between">
       
-      <!-- Modal Header -->
-      <div class="flex justify-between items-center border-b pb-4 mb-5">
-        <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-circle-check text-green-500 mr-2"></i>Maklumat Dijumpai!</h3>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
-      </div>
-
-      <!-- Detail Pelajar -->
-      <div class="space-y-4">
-        <div>
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Nama Penuh</span>
-          <p id="resName" class="text-base font-bold text-slate-800">-</p>
+      <div>
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center border-b pb-4 mb-5">
+          <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-circle-check text-green-500 mr-2"></i>Maklumat Dijumpai!</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
 
-        <!-- Box ID MOE -->
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">ID MOE (Google)</span>
-          <div class="flex justify-between items-center">
-            <span id="resEmail" class="font-mono text-slate-700 font-bold select-all break-all">-</span>
-            <button onclick="copyText('resEmail', 'copyBtnEmail')" id="copyBtnEmail" class="ml-2 text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition" title="Salin ID">
-              <i class="fa-regular fa-copy text-lg"></i>
-            </button>
+        <!-- Detail Pelajar / Guru -->
+        <div class="space-y-4">
+          <div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Nama Penuh</span>
+            <p id="resName" class="text-base font-bold text-slate-800">-</p>
           </div>
-        </div>
 
-        <!-- Box Kata Laluan -->
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Kata Laluan</span>
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-              <span id="resPassword" class="font-mono text-slate-700 font-bold tracking-widest">-</span>
-            </div>
-            <div class="flex items-center space-x-1">
-              <button onclick="togglePasswordVisibility()" class="text-slate-500 hover:text-slate-700 p-2" title="Tunjuk/Sembunyi">
-                <i id="eyeIcon" class="fa-regular fa-eye"></i>
-              </button>
-              <button onclick="copyText('resPassword', 'copyBtnPass')" id="copyBtnPass" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition" title="Salin Kata Laluan">
+          <!-- Label Dinamik (Kelas / Kategori) -->
+          <div>
+            <span id="resCategoryLabel" class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Kelas</span>
+            <p id="resCategoryValue" class="text-base font-bold text-slate-800">-</p>
+          </div>
+
+          <!-- Box ID MOE -->
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">ID MOE (Google)</span>
+            <div class="flex justify-between items-center">
+              <span id="resEmail" class="font-mono text-slate-700 font-bold select-all break-all text-sm">-</span>
+              <button onclick="copyText('resEmail', 'copyBtnEmail')" id="copyBtnEmail" class="ml-2 text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition" title="Salin ID">
                 <i class="fa-regular fa-copy text-lg"></i>
               </button>
             </div>
           </div>
+
+          <!-- Box Kata Laluan -->
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Kata Laluan</span>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center space-x-2">
+                <span id="resPassword" class="font-mono text-slate-700 font-bold tracking-widest">-</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <button onclick="togglePasswordVisibility()" class="text-slate-500 hover:text-slate-700 p-2" title="Tunjuk/Sembunyi">
+                  <i id="eyeIcon" class="fa-regular fa-eye"></i>
+                </button>
+                <button onclick="copyText('resPassword', 'copyBtnPass')" id="copyBtnPass" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition" title="Salin Kata Laluan">
+                  <i class="fa-regular fa-copy text-lg"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taktik Aliran Kerja Dua Langkah -->
+        <div class="mt-6 border-t pt-4 space-y-3">
+          <div class="text-xs text-slate-500 bg-amber-50 border border-amber-100 p-3 rounded-lg flex items-start">
+            <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 mr-2"></i>
+            <span>Sila <strong>Salin ID MOE</strong> dahulu sebelum klik butang log masuk di bawah.</span>
+          </div>
+          <a href="https://delima.moe-dl.edu.my" target="_blank" class="w-full block text-center py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition transform duration-150">
+            Log Masuk DELIMa <i class="fa-solid fa-arrow-right-to-bracket ml-1.5"></i>
+          </a>
         </div>
       </div>
 
-      <!-- Taktik Aliran Kerja Dua Langkah -->
-      <div class="mt-6 border-t pt-4 space-y-3">
-        <div class="text-xs text-slate-500 bg-amber-50 border border-amber-100 p-3 rounded-lg flex items-start">
-          <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 mr-2"></i>
-          <span>Sila <strong>Salin ID MOE</strong> dahulu sebelum klik butang log masuk di bawah.</span>
-        </div>
-        <a href="https://d2.delima.edu.my" target="_blank" class="w-full block text-center py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition transform duration-150">
-          Log Masuk DELIMa <i class="fa-solid fa-arrow-right-to-bracket ml-1.5"></i>
-        </a>
+      <!-- Footer Di Dalam Modal -->
+      <div class="mt-6 text-center text-[10px] font-medium text-slate-400 tracking-wide">
+        Digital Hub SK Methodist PJ. FMMI Version 2.0 (2026)
       </div>
 
     </div>
   </div>
 
-  <!-- KOD JAVASCRIPT BERMULA DI SINI -->
+  <!-- KOD JAVASCRIPT -->
   <script>
-    // PENTING: Gantikan URL di bawah dengan URL Google Apps Script anda yang sebenar
+    // Pautan API Google Apps Script anda yang rasmi
     const API_URL = "https://script.google.com/macros/s/AKfycbzdiPn1qO_R2Iii7ga_O8S6-7vMj_ttFeqNbocYi97xCXY1S0syM-nzh0MPPUcC_9Oy/exec";
 
     let rawPassword = ""; 
@@ -144,7 +165,7 @@
         const result = await response.json();
         
         if (result.success && result.classes.length > 0) {
-          categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kelas Anda</option>';
+          categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kelas / Kategori</option>';
           result.classes.forEach(className => {
             const option = document.createElement('option');
             option.value = className;
@@ -152,7 +173,7 @@
             categorySelect.appendChild(option);
           });
         } else {
-          categorySelect.innerHTML = '<option value="" disabled>Gagal memuatkan kelas</option>';
+          categorySelect.innerHTML = '<option value="" disabled>Gagal memuatkan data kelas</option>';
         }
       } catch (error) {
         console.error("Gagal menarik kelas:", error);
@@ -179,6 +200,20 @@
         
         if (result.success) {
           document.getElementById('resName').innerText = result.data.fullname;
+          
+          // Logik penukaran label Kategori vs Kelas
+          const categoryCleaned = category.trim().toLowerCase();
+          const labelElement = document.getElementById('resCategoryLabel');
+          const valueElement = document.getElementById('resCategoryValue');
+          
+          if (categoryCleaned === 'guru') {
+            labelElement.innerText = "Kategori";
+            valueElement.innerText = "guru";
+          } else {
+            labelElement.innerText = "Kelas";
+            valueElement.innerText = category;
+          }
+
           document.getElementById('resEmail').innerText = result.data.moeid;
           
           rawPassword = result.data.password;
@@ -189,7 +224,7 @@
         }
       } catch (error) {
         console.error("Ralat:", error);
-        alert("Maaf, ralat sistem berlaku. Cuba sebentar lagi.");
+        alert("Maaf, ralat sistem berlaku. Sila cuba sebentar lagi.");
       } finally {
         setLoadingState(false);
       }
